@@ -22,6 +22,31 @@ router.post('/', async (req, res, next) => {
 
 })
 
+router.post('/login', async (req, res, next) => {
+	let {
+		username,
+		password
+	} = req.body;
+
+	try {
+		const user = await Users.findBy({
+			username
+		});
+
+		if (user &&bcrypt.compareSync(password, user.password)) {
+			res.status(200).json({
+				message: `Welcome ${user.username}!`,
+				// token
+			});
+		} else {
+			next(err);
+		}
+
+	} catch (err) {
+		next(err);
+	}
+})
+
 function createToken(user) {
   const payload = {
       subject: user.id,
